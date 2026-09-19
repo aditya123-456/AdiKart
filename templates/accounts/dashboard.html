@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="section-conten padding-y bg">
+    <div class="container">
+        <div class="row">
+
+            <!-- LEFT SIDEBAR -->
+            <aside class="col-md-3">
+                <ul class="list-group">
+                    <a class="list-group-item active" href="{% url 'dashboard' %}">
+                        My order history
+                    </a>
+                    <a class="list-group-item" href="#">
+                        Transactions
+                    </a>
+                    <a class="list-group-item" href="#">
+                        Return and refunds
+                    </a>
+                    <a class="list-group-item" href="#">
+                        Settings
+                    </a>
+                    <a class="list-group-item" href="#">
+                        My Selling Items
+                    </a>
+                    <a class="list-group-item" href="#">
+                        Received orders
+                    </a>
+                </ul>
+
+                <br>
+
+                <a class="btn btn-light btn-block" href="{% url 'logout' %}">
+                    <i class="fa fa-power-off"></i>
+                    <span class="text">Log out</span>
+                </a>
+            </aside>
+
+            <!-- RIGHT SIDE -->
+            <main class="col-md-9">
+
+                {% if orders %}
+
+                    {% for order in orders %}
+
+                    <article class="card mb-4">
+
+                        <!-- ORDER HEADER -->
+                        <header class="card-header">
+                            <strong class="d-inline-block mr-3">
+                                Order ID: {{ order.order_number }}
+                            </strong>
+
+                            <span>
+                                Order Date: {{ order.created_at|date:"d F Y" }}
+                            </span>
+                        </header>
+
+                        <!-- ORDER DETAILS -->
+                        <div class="card-body">
+
+                            <div class="row">
+
+                                <!-- DELIVERY -->
+                                <div class="col-md-8">
+                                    <h6>Delivery to</h6>
+
+                                    <p>
+                                        <strong>
+                                            {{ order.first_name }}
+                                            {{ order.last_name }}
+                                        </strong>
+                                        <br>
+
+                                        Phone: {{ order.phone }}
+                                        <br>
+
+                                        Email: {{ order.email }}
+                                        <br>
+
+                                        Location:
+                                        {{ order.address }},
+                                        {{ order.city }},
+                                        {{ order.state }}
+                                        <br>
+
+                                        P.O. Box: {{ order.pincode }}
+                                    </p>
+                                </div>
+
+                                <!-- PAYMENT -->
+                                <div class="col-md-4">
+                                    <h6>Payment</h6>
+
+                                    <p>
+                                        <strong>
+                                            {{ order.payment_method }}
+                                        </strong>
+                                        <br>
+
+                                        Subtotal: ₹{{ order.order_total }}
+                                        <br>
+
+                                        Shipping fee: ₹{{ order.shipping_fee }}
+                                        <br>
+
+                                        Total: ₹{{ order.grand_total }}
+                                    </p>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- PRODUCTS -->
+                        {% for item in order.orderproduct_set.all %}
+
+                        <div class="card-body border-top">
+
+                            <div class="row align-items-center">
+
+                                <!-- PRODUCT IMAGE -->
+                                <div class="col-md-1">
+                                    {% if item.product.images %}
+                                    <img src="{{ item.product.images.url }}"
+                                         class="img-xs border"
+                                         style="width:60px;height:60px;object-fit:cover;">
+                                    {% endif %}
+                                </div>
+
+                                <!-- PRODUCT NAME -->
+                                <div class="col-md-4">
+                                    <p class="mb-0">
+                                        <strong>
+                                            {{ item.product.product_name }}
+                                        </strong>
+                                    </p>
+
+                                    <small>
+                                        ₹{{ item.product_price }}
+                                    </small>
+                                </div>
+
+                                <!-- SELLER -->
+                                <div class="col-md-3">
+                                    <small>Seller</small>
+                                    <br>
+                                    AdiKart
+                                </div>
+
+                                <!-- ACTIONS -->
+                                <div class="col-md-4 text-md-right">
+
+                                    <span class="badge badge-info mb-2">
+                                        {{ order.status }}
+                                    </span>
+
+                                    <br>
+
+                                    <a href="#" class="btn btn-outline-primary btn-sm">
+                                        Track order
+                                    </a>
+
+                                    <a href="#" class="btn btn-light btn-sm">
+                                        Details
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        {% endfor %}
+
+                    </article>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <article class="card">
+                        <div class="card-body text-center">
+
+                            <h4>My order history</h4>
+
+                            <p class="text-muted">
+                                You have not placed any orders yet.
+                            </p>
+
+                            <a href="{% url 'store' %}"
+                               class="btn btn-primary">
+                                Continue Shopping
+                            </a>
+
+                        </div>
+                    </article>
+
+                {% endif %}
+
+            </main>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .register-container {
+        display: flex;
+        justify-content: center;
+        padding: 40px 0;
+    }
+
+    .register-box {
+        width: 455px;
+        border: 1px solid #e5e5e5;
+        padding: 18px;
+        background: white;
+    }
+
+    .register-box h3 {
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+    .register-box label {
+        font-size: 14px;
+        margin-bottom: 6px;
+    }
+
+    .register-box input {
+        height: 35px;
+        font-size: 14px;
+    }
+
+    .register-button {
+        width: 100%;
+        height: 38px;
+        margin-top: 8px;
+        background: #3167eb;
+        border: none;
+        color: white;
+        font-weight: 600;
+    }
+
+    .login-text {
+        text-align: center;
+        margin-top: 22px;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .login-text a {
+        color: #3167eb;
+        text-decoration: none;
+    }
+</style>
+
+<div class="register-container">
+
+    <div class="register-box">
+
+        <h3>Sign up</h3>
+
+        {% if error %}
+        <div class="alert alert-danger">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <div class="row">
+
+                <div class="col-md-6">
+                    <label>First name</label>
+                    <input type="text"
+                           name="first_name"
+                           class="form-control"
+                           placeholder="Rathan"
+                           required>
+                </div>
+
+                <div class="col-md-6">
+                    <label>Last name</label>
+                    <input type="text"
+                           name="last_name"
+                           class="form-control"
+                           placeholder="Kumar"
+                           required>
+                </div>
+
+            </div>
+
+            <div class="row mt-3">
+
+                <div class="col-md-6">
+                    <label>Email Address</label>
+                    <input type="email"
+                           name="email"
+                           class="form-control"
+                           placeholder="rathan.kumar049@gmail.com"
+                           required>
+                </div>
+
+                <div class="col-md-6">
+                    <label>Phone Number</label>
+                    <input type="text"
+                           name="phone_number"
+                           class="form-control"
+                           placeholder="09619600049"
+                           required>
+                </div>
+
+            </div>
+
+            <div class="row mt-3">
+
+                <div class="col-md-6">
+                    <label>Create password</label>
+                    <input type="password"
+                           name="password"
+                           class="form-control"
+                           placeholder="Enter Password"
+                           required>
+                </div>
+
+                <div class="col-md-6">
+                    <label>Repeat password</label>
+                    <input type="password"
+                           name="confirm_password"
+                           class="form-control"
+                           placeholder="Confirm Password"
+                           required>
+                </div>
+
+            </div>
+
+            <button type="submit" class="register-button">
+                Register
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<div class="login-text">
+    Have an account? <a href="/accounts/login/">Log In</a>
+</div>
+
+{% endblock %}
