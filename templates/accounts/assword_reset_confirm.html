@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="section-conten padding-y">
+    <div class="container" style="max-width: 500px;">
+
+        <div class="card">
+
+            <header class="card-header">
+                <h4 class="card-title">
+                    Reset Password
+                </h4>
+            </header>
+
+            <div class="card-body">
+
+                {% if validlink %}
+
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        {{ form.as_p }}
+
+                        <button type="submit"
+                                class="btn btn-primary btn-block">
+                            Change Password
+                        </button>
+
+                    </form>
+
+                {% else %}
+
+                    <div class="alert alert-danger">
+                        This password reset link is invalid or has expired.
+                    </div>
+
+                    <a href="{% url 'forgot_password' %}"
+                       class="btn btn-primary btn-block">
+                        Request New Link
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
