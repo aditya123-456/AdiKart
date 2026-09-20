@@ -7,9 +7,13 @@
 
         <div class="row">
 
+            <!-- =========================
+                 BILLING DETAILS
+            ========================== -->
             <main class="col-md-8">
 
                 <article class="card">
+
                     <header class="card-header">
                         <h4 class="card-title">Billing Details</h4>
                     </header>
@@ -17,90 +21,148 @@
                     <div class="card-body">
 
                         <form method="POST">
+
                             {% csrf_token %}
 
+                            <!-- First Name / Last Name -->
                             <div class="form-row">
 
                                 <div class="form-group col-md-6">
+
                                     <label>First Name</label>
-                                    <input type="text"
-                                           name="first_name"
-                                           class="form-control"
-                                           value="{{ user.first_name }}"
-                                           required>
+
+                                    <input
+                                        type="text"
+                                        name="first_name"
+                                        class="form-control"
+                                        value="{{ user.first_name }}"
+                                        required
+                                    >
+
                                 </div>
 
                                 <div class="form-group col-md-6">
+
                                     <label>Last Name</label>
-                                    <input type="text"
-                                           name="last_name"
-                                           class="form-control"
-                                           value="{{ user.last_name }}"
-                                           required>
+
+                                    <input
+                                        type="text"
+                                        name="last_name"
+                                        class="form-control"
+                                        value="{{ user.last_name }}"
+                                        required
+                                    >
+
                                 </div>
 
                             </div>
 
+
+                            <!-- Phone -->
                             <div class="form-group">
+
                                 <label>Phone</label>
-                                <input type="text"
-                                       name="phone"
-                                       class="form-control"
-                                       value="{{ user.phone_number }}"
-                                       required>
+
+                                <input
+                                    type="text"
+                                    name="phone"
+                                    class="form-control"
+                                    value="{{ user.phone_number }}"
+                                    required
+                                >
+
                             </div>
 
+
+                            <!-- Email -->
                             <div class="form-group">
+
                                 <label>Email</label>
-                                <input type="email"
-                                       name="email"
-                                       class="form-control"
-                                       value="{{ user.email }}"
-                                       required>
+
+                                <input
+                                    type="email"
+                                    name="email"
+                                    class="form-control"
+                                    value="{{ user.email }}"
+                                    required
+                                >
+
                             </div>
 
+
+                            <!-- Address -->
                             <div class="form-group">
+
                                 <label>Address</label>
-                                <input type="text"
-                                       name="address"
-                                       class="form-control"
-                                       required>
+
+                                <input
+                                    type="text"
+                                    name="address"
+                                    class="form-control"
+                                    required
+                                >
+
                             </div>
 
+
+                            <!-- City / State -->
                             <div class="form-row">
 
                                 <div class="form-group col-md-6">
+
                                     <label>City</label>
-                                    <input type="text"
-                                           name="city"
-                                           class="form-control"
-                                           required>
+
+                                    <input
+                                        type="text"
+                                        name="city"
+                                        class="form-control"
+                                        required
+                                    >
+
                                 </div>
+
 
                                 <div class="form-group col-md-6">
+
                                     <label>State</label>
-                                    <input type="text"
-                                           name="state"
-                                           class="form-control"
-                                           required>
+
+                                    <input
+                                        type="text"
+                                        name="state"
+                                        class="form-control"
+                                        required
+                                    >
+
                                 </div>
 
                             </div>
 
+
+                            <!-- Pincode -->
                             <div class="form-group">
+
                                 <label>Pincode</label>
-                                <input type="text"
-                                       name="pincode"
-                                       class="form-control"
-                                       required>
+
+                                <input
+                                    type="text"
+                                    name="pincode"
+                                    class="form-control"
+                                    required
+                                >
+
                             </div>
 
+
+                            <!-- Payment Method -->
                             <div class="form-group">
+
                                 <label>Payment Method</label>
 
-                                <select name="payment_method"
-                                        class="form-control"
-                                        required>
+                                <select
+                                    name="payment_method"
+                                    class="form-control"
+                                    required
+                                >
 
                                     <option value="Cash on Delivery">
                                         Cash on Delivery
@@ -111,35 +173,77 @@
                                     </option>
 
                                 </select>
+
                             </div>
 
-                            <button type="submit"
-                                    class="btn btn-primary btn-block">
+
+                            <!-- Place Order -->
+                            <button
+                                type="submit"
+                                class="btn btn-primary btn-block"
+                            >
                                 Place Order
                             </button>
 
                         </form>
 
                     </div>
+
                 </article>
 
             </main>
 
+
+            <!-- =========================
+                 YOUR ORDER
+            ========================== -->
             <aside class="col-md-4">
 
                 <article class="card">
 
                     <header class="card-header">
-                        <h4 class="card-title">Your Order</h4>
+
+                        <h4 class="card-title">
+                            Your Order
+                        </h4>
+
                     </header>
+
 
                     <div class="card-body">
 
                         {% for item in cart_items %}
 
-                        <div class="d-flex justify-content-between mb-3">
+                        <!-- Product -->
+                        <div class="d-flex align-items-center mb-3">
 
-                            <div>
+                            <!-- Product Image -->
+                            <div class="mr-3">
+
+                                {% if item.product.images %}
+
+                                <img
+                                    src="{{ item.product.images.url }}"
+                                    alt="{{ item.product.product_name }}"
+                                    style="
+                                        width: 70px;
+                                        height: 70px;
+                                        object-fit: contain;
+                                        border: 1px solid #eeeeee;
+                                        border-radius: 5px;
+                                        padding: 5px;
+                                        background: #ffffff;
+                                    "
+                                >
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- Product Details -->
+                            <div class="flex-grow-1">
+
                                 <strong>
                                     {{ item.product.product_name }}
                                 </strong>
@@ -149,46 +253,77 @@
                                 <small>
                                     Qty: {{ item.quantity }}
                                 </small>
+
                             </div>
 
+
+                            <!-- Product Price -->
                             <div>
+
                                 ₹{{ item.subtotal }}
+
                             </div>
 
                         </div>
 
+                        {% empty %}
+
+                        <p class="text-center text-muted">
+                            Your cart is empty.
+                        </p>
+
                         {% endfor %}
 
+
+                        <!-- Subtotal -->
                         <hr>
 
                         <p>
+
                             Subtotal
+
                             <span class="float-right">
                                 ₹{{ total }}
                             </span>
+
                         </p>
 
+
+                        <!-- Tax -->
                         <p>
+
                             Tax
+
                             <span class="float-right">
                                 ₹{{ tax }}
                             </span>
+
                         </p>
 
+
+                        <!-- Shipping -->
                         <p>
+
                             Shipping
+
                             <span class="float-right">
                                 ₹{{ shipping_fee }}
                             </span>
+
                         </p>
 
+
+                        <!-- Total -->
                         <hr>
 
                         <h5>
+
                             Total
+
                             <span class="float-right">
                                 ₹{{ grand_total }}
                             </span>
+
                         </h5>
 
                     </div>
@@ -203,4 +338,3 @@
 </section>
 
 {% endblock %}
-
