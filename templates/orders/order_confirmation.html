@@ -1,0 +1,496 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .confirmation-section {
+        background: #f8f9fa;
+        padding: 25px 0;
+        min-height: 75vh;
+    }
+
+    .confirmation-card {
+        background: #fff;
+        border: 1px solid #dedede;
+        border-radius: 5px;
+        margin-bottom: 12px;
+        overflow: hidden;
+    }
+
+    .confirmation-header {
+        padding: 14px 16px;
+        border-bottom: 1px solid #dedede;
+    }
+
+    .confirmation-header h5 {
+        margin: 0;
+        font-size: 17px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .confirmation-body {
+        padding: 16px;
+    }
+
+    .order-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 18px;
+        color: #555;
+        font-size: 14px;
+    }
+
+    .address-details {
+        color: #333;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+
+    /* PRODUCT DETAILS */
+    .product-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .product-row:last-child {
+        border-bottom: none;
+    }
+
+    .product-image {
+        width: 65px;
+        height: 65px;
+        object-fit: contain;
+        padding: 4px;
+        border: 1px solid #e5e5e5;
+        border-radius: 3px;
+        flex-shrink: 0;
+    }
+
+    .product-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .product-info h6 {
+        margin-bottom: 5px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #222;
+    }
+
+    .product-info small {
+        display: block;
+        color: #666;
+        margin-top: 3px;
+    }
+
+    .product-price {
+        font-weight: 600;
+        white-space: nowrap;
+        color: #222;
+    }
+
+    /* PAYMENT SUMMARY */
+    .payment-summary {
+        background: #fff;
+        border: 1px solid #e3e3e3;
+        border-radius: 5px;
+        padding: 14px 12px;
+        margin-bottom: 15px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+        color: #555;
+        font-size: 13px;
+    }
+
+    .summary-row span:last-child {
+        white-space: nowrap;
+    }
+
+    .grand-total {
+        margin-bottom: 0;
+        color: #222;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .payment-summary hr {
+        margin: 12px 0;
+        border-top: 1px solid #e5e5e5;
+    }
+
+    /* CSS PAYMENT BADGES: NO EXTERNAL IMAGES */
+    .payment-logos {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 4px;
+        margin: 14px 0;
+    }
+
+    .payment-badge {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 27px;
+        height: 19px;
+        border-radius: 2px;
+        color: #fff;
+        font-size: 7px;
+        font-weight: bold;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .paypal {
+        width: 26px;
+        background: #123b76;
+        font-style: italic;
+    }
+
+    .visa {
+        width: 25px;
+        background: #1769aa;
+        font-size: 9px;
+        font-style: italic;
+    }
+
+    .mastercard {
+        width: 27px;
+        background: #222;
+    }
+
+    .mc-red,
+    .mc-yellow {
+        position: absolute;
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        top: 3px;
+    }
+
+    .mc-red {
+        left: 3px;
+        background: #eb001b;
+    }
+
+    .mc-yellow {
+        right: 3px;
+        background: #f79e1b;
+        opacity: 0.95;
+    }
+
+    .amex {
+        width: 29px;
+        background: #2674a9;
+        font-size: 7px;
+    }
+
+    /* BLUE BUTTON */
+    .payment-button {
+        display: block;
+        width: 100%;
+        padding: 9px 10px;
+        border: 1px solid #3167eb;
+        border-radius: 4px;
+        background: #3167eb;
+        color: #fff;
+        text-align: center;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .payment-button:hover {
+        background: #2454c6;
+        border-color: #2454c6;
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .payment-note {
+        display: block;
+        margin-top: 8px;
+        font-size: 12px;
+    }
+
+    @media (max-width: 767px) {
+        .confirmation-section {
+            padding: 15px 0;
+        }
+
+        .order-meta {
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .confirmation-body {
+            padding: 13px;
+        }
+
+        .product-image {
+            width: 55px;
+            height: 55px;
+        }
+    }
+</style>
+
+<section class="confirmation-section">
+    <div class="container">
+
+        <div class="row">
+
+            <!-- LEFT COLUMN -->
+            <main class="col-lg-8">
+
+                <!-- ORDER ID AND DATE -->
+                <article class="confirmation-card">
+                    <div class="confirmation-body">
+
+                        <div class="order-meta">
+
+                            <strong>
+                                Order ID: ORDER-{{ order.id }}
+                            </strong>
+
+                            <span>
+                                Order Date:
+                                {% if order.created_at %}
+                                    {{ order.created_at|date:"d F Y" }}
+                                {% elif order.date_created %}
+                                    {{ order.date_created|date:"d F Y" }}
+                                {% else %}
+                                    Not available
+                                {% endif %}
+                            </span>
+
+                        </div>
+
+                    </div>
+                </article>
+
+                <!-- BILLING ADDRESS -->
+                <article class="confirmation-card">
+
+                    <header class="confirmation-header">
+                        <h5>Billing Address</h5>
+                    </header>
+
+                    <div class="confirmation-body address-details">
+
+                        <strong>
+                            {{ order.first_name }}
+                            {{ order.last_name }}
+                        </strong>
+
+                        <br>
+                        {{ order.address }}
+
+                        <br>
+                        {{ order.city }}, {{ order.state }}
+
+                        <br>
+                        PIN: {{ order.pincode }}
+
+                        <br>
+                        Phone: {{ order.phone }}
+
+                        <br>
+                        Email: {{ order.email }}
+
+                    </div>
+
+                </article>
+
+                <!-- PAYMENT METHOD -->
+                <article class="confirmation-card">
+
+                    <header class="confirmation-header">
+                        <h5>Payment Method</h5>
+                    </header>
+
+                    <div class="confirmation-body">
+
+                        <strong>
+                            {{ order.payment_method }}
+                        </strong>
+
+                        <p class="text-muted mt-2 mb-0">
+                            Order Status: {{ order.status }}
+                        </p>
+
+                    </div>
+
+                </article>
+
+                <!-- REVIEW PRODUCTS -->
+                <article class="confirmation-card">
+
+                    <header class="confirmation-header">
+                        <h5>Review Products</h5>
+                    </header>
+
+                    <div class="confirmation-body">
+
+                        {% for item in order_products %}
+
+                            <div class="product-row">
+
+                                {% if item.product.images %}
+                                    <img
+                                        src="{{ item.product.images.url }}"
+                                        alt="{{ item.product.product_name }}"
+                                        class="product-image"
+                                    >
+                                {% endif %}
+
+                                <div class="product-info">
+
+                                    <h6>
+                                        {{ item.product.product_name }}
+                                    </h6>
+
+                                    <small>
+                                        Quantity: {{ item.quantity }}
+                                    </small>
+
+                                    {% if item.color %}
+                                        <small>
+                                            Colour: {{ item.color }}
+                                        </small>
+                                    {% endif %}
+
+                                    {% if item.size %}
+                                        <small>
+                                            Size: {{ item.size }}
+                                        </small>
+                                    {% endif %}
+
+                                </div>
+
+                                <div class="product-price">
+                                    ₹{% widthratio item.product_price 1 item.quantity %}
+                                </div>
+
+                            </div>
+
+                        {% empty %}
+
+                            <p class="text-muted mb-0">
+                                No products found for this order.
+                            </p>
+
+                        {% endfor %}
+
+                    </div>
+
+                </article>
+
+            </main>
+
+            <!-- RIGHT COLUMN: PAYMENT SUMMARY -->
+            <aside class="col-lg-4">
+
+                <article class="payment-summary">
+
+                    <div class="summary-row">
+                        <span>Total price:</span>
+                        <span>
+                            ₹{{ order.order_total|floatformat:2 }}
+                        </span>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>Tax:</span>
+                        <span>
+                            ₹{{ order.tax|floatformat:2 }}
+                        </span>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>Shipping:</span>
+                        <span>
+                            ₹{{ order.shipping_fee|floatformat:2 }}
+                        </span>
+                    </div>
+
+                    <hr>
+
+                    <div class="summary-row grand-total">
+                        <span>Grand Total:</span>
+                        <span>
+                            ₹{{ order.grand_total|floatformat:2 }}
+                        </span>
+                    </div>
+
+                    <hr>
+
+                    <!-- PAYMENT LOGOS -->
+                    <div class="payment-logos">
+
+                        <span class="payment-badge paypal">
+                            PayPal
+                        </span>
+
+                        <span class="payment-badge visa">
+                            VISA
+                        </span>
+
+                        <span class="payment-badge mastercard">
+                            <span class="mc-red"></span>
+                            <span class="mc-yellow"></span>
+                        </span>
+
+                        <span class="payment-badge amex">
+                            AMEX
+                        </span>
+
+                    </div>
+
+
+<!-- PAYMENT BUTTON -->
+{% if order.payment_method == "Online Payment" %}
+
+    <a
+        href="{% url 'demo_payment_success' order.id %}"
+        class="payment-button"
+    >
+        Make Payment
+    </a>
+
+{% else %}
+
+    <a
+        href="{% url 'dashboard' %}"
+        class="payment-button"
+    >
+        Continue Shopping
+    </a>
+
+{% endif %}
+
+
+
+                </article>
+
+            </aside>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
