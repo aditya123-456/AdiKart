@@ -1,0 +1,299 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .invoice-section {
+        background: #f5f5f5;
+        padding: 35px 0;
+    }
+
+    .invoice-container {
+        background: #fff;
+        max-width: 900px;
+        margin: auto;
+        padding: 35px;
+        border: 1px solid #eee;
+    }
+
+    .invoice-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 30px;
+    }
+
+    .invoice-logo {
+        font-size: 28px;
+        font-weight: bold;
+        color: #3167eb;
+    }
+
+    .invoice-logo span {
+        color: #555;
+    }
+
+    .invoice-address {
+        text-align: right;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .invoice-details {
+        font-size: 14px;
+        line-height: 1.8;
+        margin-bottom: 20px;
+    }
+
+    .invoice-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .invoice-table th,
+    .invoice-table td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        font-size: 14px;
+    }
+
+    .invoice-table th {
+        background: #f5f5f5;
+        text-align: center;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .text-right {
+        text-align: right;
+    }
+
+    .invoice-total {
+        font-weight: bold;
+    }
+
+    .invoice-thankyou {
+        text-align: center;
+        margin-top: 25px;
+        color: #666;
+    }
+
+    .invoice-actions {
+        max-width: 900px;
+        margin: 15px auto;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    @media print {
+        .invoice-actions,
+        header,
+        footer {
+            display: none !important;
+        }
+
+        .invoice-section {
+            padding: 0;
+            background: white;
+        }
+
+        .invoice-container {
+            border: none;
+        }
+    }
+</style>
+
+
+<section class="invoice-section">
+
+    <div class="container">
+
+        <!-- ACTION BUTTONS -->
+        <div class="invoice-actions">
+
+            <a href="{% url 'my_orders' %}"
+               class="btn btn-secondary">
+                Back to Orders
+            </a>
+
+            <button onclick="window.print()"
+                    class="btn btn-primary">
+                <i class="fas fa-print"></i>
+                Print Invoice
+            </button>
+
+        </div>
+
+
+        <div class="invoice-container">
+
+            <!-- HEADER -->
+            <div class="invoice-header">
+
+                <div class="invoice-logo">
+                    Adi<span>Kart</span>
+                </div>
+
+                <div class="invoice-address">
+
+                    <strong>Invoiced To</strong><br>
+
+                    {{ order.first_name }}
+                    {{ order.last_name }}<br>
+
+                    {{ order.address }}<br>
+
+                    {{ order.city }}, {{ order.state }}<br>
+
+                    {{ order.pincode }}<br>
+
+                    India
+
+                </div>
+
+            </div>
+
+            <hr>
+
+
+            <!-- ORDER DETAILS -->
+            <div class="invoice-details">
+
+                <strong>Order #:</strong>
+                {{ order.order_number }}<br>
+
+                <strong>Transaction ID:</strong>
+                Not available<br>
+
+                <strong>Order Date:</strong>
+                {{ order.created_at|date:"F d, Y, g:i a" }}<br>
+
+                <strong>Status:</strong>
+                {{ order.status }}<br>
+
+                <strong>Payment Method:</strong>
+                {{ order.payment_method }}<br>
+
+                <strong>Payment Status:</strong>
+                {{ order.payment_status|default:"Pending" }}
+
+            </div>
+
+
+            <!-- PRODUCT DETAILS -->
+            <div class="table-responsive">
+
+                <table class="invoice-table">
+
+                    <thead>
+                        <tr>
+                            <th>Products</th>
+                            <th>Qty</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for item in order_products %}
+
+                            <tr>
+
+                                <td>
+
+                                    <strong>
+                                        {{ item.product.product_name }}
+                                    </strong>
+
+                                    {% if item.color %}
+                                        <br>
+                                        <small>
+                                            Colour: {{ item.color }}
+                                        </small>
+                                    {% endif %}
+
+                                    {% if item.size %}
+                                        <br>
+                                        <small>
+                                            Size: {{ item.size }}
+                                        </small>
+                                    {% endif %}
+
+                                </td>
+
+                                <td class="text-center">
+                                    {{ item.quantity }}
+                                </td>
+
+                                <td class="text-center">
+                                    ₹{{ item.product_price|floatformat:2|add:"0" }}
+                                    × {{ item.quantity }}
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+
+                        <tr class="invoice-total">
+                            <td colspan="2" class="text-right">
+                                Sub Total:
+                            </td>
+                            <td class="text-center">
+                                ₹{{ order.order_total|floatformat:2 }}
+                            </td>
+                        </tr>
+
+                        <tr class="invoice-total">
+                            <td colspan="2" class="text-right">
+                                Tax:
+                            </td>
+                            <td class="text-center">
+                                ₹{{ order.tax|floatformat:2 }}
+                            </td>
+                        </tr>
+
+                        <tr class="invoice-total">
+                            <td colspan="2" class="text-right">
+                                Shipping Fee:
+                            </td>
+                            <td class="text-center">
+                                ₹{{ order.shipping_fee|floatformat:2 }}
+                            </td>
+                        </tr>
+
+                        <tr class="invoice-total">
+                            <td colspan="2" class="text-right">
+                                Grand Total:
+                            </td>
+                            <td class="text-center">
+                                ₹{{ order.grand_total|floatformat:2 }}
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- FOOTER -->
+            <div class="invoice-thankyou">
+
+                <p>Thank you for shopping with us!</p>
+
+                <strong>AdiKart</strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

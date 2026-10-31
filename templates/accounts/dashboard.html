@@ -1,207 +1,241 @@
-{% extends "base.html" %}
+
+{% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 
-<section class="section-conten padding-y bg">
+<style>
+    .account-section {
+        background: #f8f9fa;
+        padding: 35px 0;
+        min-height: 500px;
+    }
+
+    .account-sidebar {
+        background: #fff;
+        border: 1px solid #ddd;
+    }
+
+    .account-sidebar a {
+        display: block;
+        padding: 13px 15px;
+        color: #555;
+        text-decoration: none;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .account-sidebar a:hover,
+    .account-sidebar a.active {
+        background: #3167eb;
+        color: #fff;
+    }
+
+    .account-sidebar .logout-link {
+        margin-top: 15px;
+        text-align: center;
+        border: 1px solid #ddd;
+    }
+
+    .account-content {
+        background: #fff;
+        border: 1px solid #eee;
+        padding: 20px;
+    }
+
+    .dashboard-card {
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 5px;
+        padding: 25px 15px;
+        text-align: center;
+        height: 100%;
+    }
+
+    .dashboard-card h2 {
+        font-size: 28px;
+        margin: 12px 0;
+    }
+
+    .dashboard-card a {
+        color: #3167eb;
+        text-decoration: none;
+    }
+
+    .profile-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 145px;
+        text-align: center;
+    }
+
+    .profile-icon {
+        font-size: 42px;
+        color: #3167eb;
+        margin-bottom: 10px;
+    }
+</style>
+
+
+<section class="account-section">
     <div class="container">
+
         <div class="row">
 
-            <!-- LEFT SIDEBAR -->
-            <aside class="col-md-3">
-                <ul class="list-group">
-                    <a class="list-group-item active" href="{% url 'dashboard' %}">
-                        My order history
+            <!-- SIDEBAR -->
+            <div class="col-md-3 mb-4">
+
+                <div class="account-sidebar">
+
+                    <a href="{% url 'dashboard' %}" class="active">
+                        <i class="fas fa-tachometer-alt"></i>
+                        &nbsp; Dashboard
                     </a>
-                    <a class="list-group-item" href="#">
-                        Transactions
+
+                    <a href="{% url 'my_orders' %}">
+                        <i class="fas fa-shopping-bag"></i>
+                        &nbsp; My Orders
                     </a>
-                    <a class="list-group-item" href="#">
-                        Return and refunds
+
+                    <a href="{% url 'edit_profile' %}">
+                        <i class="fas fa-user-edit"></i>
+                        &nbsp; Edit Profile
                     </a>
-                    <a class="list-group-item" href="#">
-                        Settings
+
+                    <a href="{% url 'change_password' %}">
+                        <i class="fas fa-lock"></i>
+                        &nbsp; Change Password
                     </a>
-                    <a class="list-group-item" href="#">
-                        My Selling Items
+
+                    <a href="{% url 'logout' %}" class="logout-link">
+                        <i class="fas fa-power-off"></i>
+                        &nbsp; Log out
                     </a>
-                    <a class="list-group-item" href="#">
-                        Received orders
-                    </a>
-                </ul>
 
-                <br>
+                </div>
 
-                <a class="btn btn-light btn-block" href="{% url 'logout' %}">
-                    <i class="fa fa-power-off"></i>
-                    <span class="text">Log out</span>
-                </a>
-            </aside>
+            </div>
 
-            <!-- RIGHT SIDE -->
-            <main class="col-md-9">
 
-                {% if orders %}
+            <!-- DASHBOARD CONTENT -->
+            <div class="col-md-9">
 
-                    {% for order in orders %}
+                <div class="account-content">
 
-                    <article class="card mb-4">
+                    <p>
+                        <strong>Logged in as:</strong>
+                        {{ request.user.first_name }}
+                        {{ request.user.last_name }}
+                    </p>
 
-                        <!-- ORDER HEADER -->
-                        <header class="card-header">
-                            <strong class="d-inline-block mr-3">
-                                Order ID: {{ order.order_number }}
-                            </strong>
+                    <hr>
 
-                            <span>
-                                Order Date: {{ order.created_at|date:"d F Y" }}
-                            </span>
-                        </header>
+                    <div class="row">
 
-                        <!-- ORDER DETAILS -->
-                        <div class="card-body">
+                        <!-- TOTAL ORDERS -->
+                        <div class="col-md-6 mb-3">
 
-                            <div class="row">
+                            <div class="dashboard-card">
 
-                                <!-- DELIVERY -->
-                                <div class="col-md-8">
-                                    <h6>Delivery to</h6>
+                                <h5>Total Orders</h5>
 
-                                    <p>
-                                        <strong>
-                                            {{ order.first_name }}
-                                            {{ order.last_name }}
-                                        </strong>
-                                        <br>
+                                <h2>{{ total_orders }}</h2>
 
-                                        Phone: {{ order.phone }}
-                                        <br>
-
-                                        Email: {{ order.email }}
-                                        <br>
-
-                                        Location:
-                                        {{ order.address }},
-                                        {{ order.city }},
-                                        {{ order.state }}
-                                        <br>
-
-                                        P.O. Box: {{ order.pincode }}
-                                    </p>
-                                </div>
-
-                                <!-- PAYMENT -->
-                                <div class="col-md-4">
-                                    <h6>Payment</h6>
-
-                                    <p>
-                                        <strong>
-                                            {{ order.payment_method }}
-                                        </strong>
-                                        <br>
-
-                                        Subtotal: ₹{{ order.order_total }}
-                                        <br>
-
-                                        Shipping fee: ₹{{ order.shipping_fee }}
-                                        <br>
-
-                                        Total: ₹{{ order.grand_total }}
-                                    </p>
-                                </div>
+                                <a href="{% url 'my_orders' %}">
+                                    View Orders
+                                </a>
 
                             </div>
 
                         </div>
 
-                        <!-- PRODUCTS -->
-                        {% for item in order.orderproduct_set.all %}
 
-                        <div class="card-body border-top">
+                        <!-- PROFILE DETAILS -->
+                        <div class="col-md-6 mb-3">
 
-                            <div class="row align-items-center">
+                            <div class="dashboard-card profile-card">
 
-                                <!-- PRODUCT IMAGE -->
-                                <div class="col-md-1">
-                                    {% if item.product.images %}
-                                    <img src="{{ item.product.images.url }}"
-                                         class="img-xs border"
-                                         style="width:60px;height:60px;object-fit:cover;">
-                                    {% endif %}
-                                </div>
+                                <i class="fas fa-user-circle profile-icon"></i>
 
-                                <!-- PRODUCT NAME -->
-                                <div class="col-md-4">
-                                    <p class="mb-0">
-                                        <strong>
-                                            {{ item.product.product_name }}
-                                        </strong>
-                                    </p>
+                                <strong>
+                                    {{ request.user.first_name }}
+                                    {{ request.user.last_name }}
+                                </strong>
 
-                                    <small>
-                                        ₹{{ item.product_price }}
-                                    </small>
-                                </div>
+                                <p class="mb-1">
+                                    {{ request.user.email }}
+                                </p>
 
-                                <!-- SELLER -->
-                                <div class="col-md-3">
-                                    <small>Seller</small>
-                                    <br>
-                                    AdiKart
-                                </div>
-
-                                <!-- ACTIONS -->
-                                <div class="col-md-4 text-md-right">
-
-                                    <span class="badge badge-info mb-2">
-                                        {{ order.status }}
-                                    </span>
-
-                                    <br>
-
-                                    <a href="#" class="btn btn-outline-primary btn-sm">
-                                        Track order
-                                    </a>
-
-                                    <a href="#" class="btn btn-light btn-sm">
-                                        Details
-                                    </a>
-
-                                </div>
+                                <p class="mb-0">
+                                    {{ request.user.phone_number }}
+                                </p>
 
                             </div>
 
                         </div>
 
-                        {% endfor %}
+                    </div>
 
-                    </article>
 
-                    {% endfor %}
+                    <!-- RECENT ORDERS -->
+                    <h5 class="mt-4 mb-3">Recent Orders</h5>
 
-                {% else %}
+                    <div class="table-responsive">
 
-                    <article class="card">
-                        <div class="card-body text-center">
+                        <table class="table table-bordered">
 
-                            <h4>My order history</h4>
+                            <thead>
+                                <tr>
+                                    <th>Order</th>
+                                    <th>Date</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
 
-                            <p class="text-muted">
-                                You have not placed any orders yet.
-                            </p>
+                            <tbody>
 
-                            <a href="{% url 'store' %}"
-                               class="btn btn-primary">
-                                Continue Shopping
-                            </a>
+                                {% for order in orders %}
 
-                        </div>
-                    </article>
+                                    <tr>
+                                        <td>{{ order.order_number }}</td>
 
-                {% endif %}
+                                        <td>
+                                            {{ order.created_at|date:"d M Y" }}
+                                        </td>
 
-            </main>
+                                        <td>
+                                            ₹{{ order.grand_total }}
+                                        </td>
+
+                                        <td>
+                                            {{ order.status }}
+                                        </td>
+                                    </tr>
+
+                                {% empty %}
+
+                                    <tr>
+                                        <td colspan="4" class="text-center">
+                                            You have not placed any orders yet.
+                                        </td>
+                                    </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
+
     </div>
 </section>
 

@@ -1,0 +1,427 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .account-section {
+        background: #f8f9fa;
+        padding: 35px 0;
+        min-height: 500px;
+    }
+
+    .account-sidebar {
+        background: #fff;
+        border: 1px solid #ddd;
+    }
+
+    .account-sidebar a {
+        display: block;
+        padding: 12px 15px;
+        color: #555;
+        text-decoration: none;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .account-sidebar a:hover,
+    .account-sidebar a.active {
+        background: #3167eb;
+        color: #fff;
+    }
+
+    .logout-link {
+        display: block;
+        margin-top: 15px;
+        padding: 12px;
+        text-align: center;
+        background: #fff;
+        border: 1px solid #ddd;
+        color: #555;
+        text-decoration: none;
+    }
+
+    .profile-card {
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 4px;
+    }
+
+    .profile-header {
+        padding: 15px;
+        border-bottom: 1px solid #ddd;
+        font-weight: 600;
+    }
+
+    .profile-body {
+        padding: 20px;
+    }
+
+    .profile-avatar {
+        width: 75px;
+        height: 75px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #ddd;
+        padding: 3px;
+    }
+
+    .profile-placeholder {
+        width: 75px;
+        height: 75px;
+        border-radius: 50%;
+        background: #e9edff;
+        color: #3167eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 38px;
+        margin-left: auto;
+    }
+
+    .form-group label {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 5px;
+    }
+
+    .form-control {
+        border-radius: 4px;
+    }
+
+    .profile-picture-section {
+        text-align: right;
+        margin-bottom: 20px;
+    }
+
+    @media (max-width: 767px) {
+        .profile-picture-section {
+            text-align: left;
+        }
+
+        .profile-placeholder {
+            margin-left: 0;
+        }
+    }
+</style>
+
+
+<section class="account-section">
+
+    <div class="container">
+
+        <div class="row">
+
+            <!-- LEFT SIDEBAR -->
+            <div class="col-md-3 mb-4">
+
+                <div class="account-sidebar">
+
+                    <a href="{% url 'dashboard' %}">
+                        Dashboard
+                    </a>
+
+                    <a href="{% url 'my_orders' %}">
+                        My Orders
+                    </a>
+
+                    <a href="{% url 'edit_profile' %}" class="active">
+                        Edit Profile
+                    </a>
+
+                    <a href="{% url 'change_password' %}">
+                        Change Password
+                    </a>
+
+                </div>
+
+                <a href="{% url 'logout' %}" class="logout-link">
+                    <i class="fas fa-power-off"></i>
+                    &nbsp; Log out
+                </a>
+
+            </div>
+
+
+            <!-- RIGHT PROFILE FORM -->
+            <div class="col-md-9">
+
+                <div class="profile-card">
+
+                    <div class="profile-header">
+                        Edit your profile
+                    </div>
+
+                    <div class="profile-body">
+
+                        <!-- PROFILE PICTURE PREVIEW -->
+                        <div class="profile-picture-section">
+
+                            {% if request.user.profile_picture %}
+
+                                <img
+                                    src="{{ request.user.profile_picture.url }}"
+                                    alt="Profile Picture"
+                                    class="profile-avatar"
+                                >
+
+                            {% else %}
+
+                                <div class="profile-placeholder">
+                                    <i class="fas fa-user"></i>
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- MESSAGES -->
+                        {% if messages %}
+
+                            {% for message in messages %}
+
+                                <div class="alert alert-{{ message.tags }}">
+                                    {{ message }}
+                                </div>
+
+                            {% endfor %}
+
+                        {% endif %}
+
+
+                        <!-- PROFILE FORM -->
+                        <form method="POST" enctype="multipart/form-data">
+
+                            {% csrf_token %}
+
+                            <div class="row">
+
+                                <!-- FIRST NAME -->
+                                <div class="col-md-6">
+
+                                    <div class="form-group">
+
+                                        <label for="first_name">
+                                            First Name
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            name="first_name"
+                                            id="first_name"
+                                            class="form-control"
+                                            value="{{ request.user.first_name }}"
+                                            required
+                                        >
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- LAST NAME -->
+                                <div class="col-md-6">
+
+                                    <div class="form-group">
+
+                                        <label for="last_name">
+                                            Last Name
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            name="last_name"
+                                            id="last_name"
+                                            class="form-control"
+                                            value="{{ request.user.last_name }}"
+                                            required
+                                        >
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- PHONE NUMBER -->
+                                <div class="col-md-6">
+
+                                    <div class="form-group">
+
+                                        <label for="phone_number">
+                                            Phone Number
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            name="phone_number"
+                                            id="phone_number"
+                                            class="form-control"
+                                            value="{{ request.user.phone_number }}"
+                                            required
+                                        >
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- PROFILE PICTURE -->
+                                <div class="col-md-6">
+
+                                    <div class="form-group">
+
+                                        <label for="profile_picture">
+                                            Profile Picture
+                                        </label>
+
+                                        <input
+                                            type="file"
+                                            name="profile_picture"
+                                            id="profile_picture"
+                                            class="form-control"
+                                            accept="image/*"
+                                        >
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- ADDRESS LINE 1 -->
+                                <div class="col-md-12">
+
+                                    <div class="form-group">
+
+                                        <label for="address_line_1">
+                                            Address Line 1
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            name="address_line_1"
+                                            id="address_line_1"
+                                            class="form-control"
+                                            value="{{ request.user.address_line_1 }}"
+                                            placeholder="House number, street name"
+                                        >
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- ADDRESS LINE 2 -->
+                                <div class="col-md-12">
+
+                                    <div class="form-group">
+
+                                        <label for="address_line_2">
+                                            Address Line 2
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            name="address_line_2"
+                                            id="address_line_2"
+                                            class="form-control"
+                                            value="{{ request.user.address_line_2 }}"
+                                            placeholder="Apartment, area, landmark"
+                                        >
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- CITY -->
+                                <div class="col-md-4">
+
+                                    <div class="form-group">
+
+                                        <label for="city">
+                                            City
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            name="city"
+                                            id="city"
+                                            class="form-control"
+                                            value="{{ request.user.city }}"
+                                        >
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- STATE -->
+                                <div class="col-md-4">
+
+                                    <div class="form-group">
+
+                                        <label for="state">
+                                            State
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            name="state"
+                                            id="state"
+                                            class="form-control"
+                                            value="{{ request.user.state }}"
+                                        >
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- COUNTRY -->
+                                <div class="col-md-4">
+
+                                    <div class="form-group">
+
+                                        <label for="country">
+                                            Country
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            name="country"
+                                            id="country"
+                                            class="form-control"
+                                            value="{{ request.user.country }}"
+                                        >
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- SAVE BUTTON -->
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                            >
+                                Save
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
