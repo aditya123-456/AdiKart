@@ -1,164 +1,449 @@
-{% extends "base.html" %}
+
+{% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 
-<section class="section-content padding-y bg">
+<style>
+    /* Star rating form */
+    .rating-stars {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        width: fit-content;
+    }
 
+    .rating-stars input {
+        display: none;
+    }
+
+    .rating-stars label {
+        font-size: 32px;
+        color: #ccc;
+        cursor: pointer;
+        padding: 0 3px;
+        transition: color 0.2s;
+    }
+
+    .rating-stars label:hover,
+    .rating-stars label:hover ~ label,
+    .rating-stars input:checked ~ label {
+        color: #ffc107;
+    }
+
+    .review-stars {
+        color: #ffc107;
+        font-size: 16px;
+    }
+
+    .product-image {
+        max-width: 100%;
+        max-height: 450px;
+        object-fit: contain;
+    }
+</style>
+
+
+<section class="section-content padding-y bg">
     <div class="container">
 
+        <!-- PRODUCT DETAILS -->
         <div class="card">
-
             <div class="row no-gutters">
 
-                <!-- Product Image -->
+                <!-- PRODUCT IMAGE -->
                 <aside class="col-md-6">
-
                     <article class="gallery-wrap">
+                        <div class="img-big-wrap text-center p-4">
 
-                        <div class="img-big-wrap">
-
-                            <div class="text-center p-4">
-
-                                {% if product.images %}
-                                    <img src="{{ product.images.url }}"
-                                         alt="{{ product.product_name }}"
-                                         style="max-width:100%; height:400px; object-fit:contain;">
-                                {% else %}
-                                    <p>No image available</p>
-                                {% endif %}
-
-                            </div>
+                            {% if product.images %}
+                                <img
+                                    src="{{ product.images.url }}"
+                                    alt="{{ product.product_name }}"
+                                    class="product-image"
+                                >
+                            {% endif %}
 
                         </div>
-
                     </article>
-
                 </aside>
 
 
-                <!-- Product Details -->
+                <!-- PRODUCT INFORMATION -->
                 <main class="col-md-6 border-left">
-
-                    <article class="content-body">
+                    <article class="content-body p-4">
 
                         <h2 class="title">
                             {{ product.product_name }}
                         </h2>
 
                         <div class="mb-3">
-
                             <var class="price h4">
                                 ₹{{ product.price }}
                             </var>
-
                         </div>
 
                         <p>
                             {{ product.description }}
                         </p>
 
-
                         <hr>
 
 
-                        <!-- Add to Cart -->
-                        <form action="{% url 'add_to_cart' product.id %}"
-                              method="GET">
+                        <!-- STOCK STATUS -->
+                        {% if product.is_available and product.stock > 0 %}
 
-                            <!-- Color -->
-                            <div class="form-group">
+                            <p class="text-success">
+                                <strong>In Stock</strong>
+                            </p>
 
-                                <label>
-                                    <strong>Color</strong>
-                                </label>
+                        {% else %}
 
-                                <select name="color"
+                            <p class="text-danger">
+                                <strong>Out of Stock</strong>
+                            </p>
+
+                        {% endif %}
+
+
+                        <!-- ADD TO CART -->
+                        {% if product.is_available and product.stock > 0 %}
+
+                            <form
+                                action="{% url 'add_to_cart' product.id %}"
+                                method="GET"
+                            >
+
+                                <!-- COLOUR -->
+                                <div class="form-group">
+
+                                    <label for="color">
+                                        Select Colour
+                                    </label>
+
+                                    <select
+                                        name="color"
+                                        id="color"
                                         class="form-control"
-                                        required>
+                                        required
+                                    >
+                                        <option value="">
+                                            Choose Colour
+                                        </option>
 
-                                    <option value="">
-                                        Select Color
-                                    </option>
+                                        <option value="Black">Black</option>
+                                        <option value="White">White</option>
+                                        <option value="Blue">Blue</option>
+                                        <option value="Red">Red</option>
+                                        <option value="Grey">Grey</option>
 
-                                    <option value="Green">
-                                        Green
-                                    </option>
+                                    </select>
 
-                                    <option value="Black">
-                                        Black
-                                    </option>
-
-                                    <option value="Red">
-                                        Red
-                                    </option>
-
-                                    <option value="Blue">
-                                        Blue
-                                    </option>
-
-                                </select>
-
-                            </div>
+                                </div>
 
 
-                            <!-- Size -->
-                            <div class="form-group">
+                                <!-- SIZE -->
+                                <div class="form-group">
 
-                                <label>
-                                    <strong>Size</strong>
-                                </label>
-
-                                <select name="size"
-                                        class="form-control"
-                                        required>
-
-                                    <option value="">
+                                    <label for="size">
                                         Select Size
-                                    </option>
+                                    </label>
 
-                                    <option value="Small">
-                                        Small
-                                    </option>
+                                    <select
+                                        name="size"
+                                        id="size"
+                                        class="form-control"
+                                        required
+                                    >
+                                        <option value="">
+                                            Choose Size
+                                        </option>
 
-                                    <option value="Medium">
-                                        Medium
-                                    </option>
+                                        <option value="S">S</option>
+                                        <option value="M">M</option>
+                                        <option value="L">L</option>
+                                        <option value="XL">XL</option>
+                                        <option value="XXL">XXL</option>
 
-                                    <option value="Large">
-                                        Large
-                                    </option>
+                                    </select>
 
-                                    <option value="XL">
-                                        XL
-                                    </option>
+                                </div>
 
-                                </select>
+
+                                <!-- ADD BUTTON -->
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary btn-block"
+                                >
+                                    <i class="fas fa-shopping-cart"></i>
+                                    Add to Cart
+                                </button>
+
+                            </form>
+
+                        {% else %}
+
+                            <button
+                                class="btn btn-secondary btn-block"
+                                disabled
+                            >
+                                Out of Stock
+                            </button>
+
+                        {% endif %}
+
+                    </article>
+                </main>
+
+            </div>
+        </div>
+
+
+
+        <!-- CUSTOMER REVIEWS -->
+        <div class="card mt-4">
+
+            <div class="card-body">
+
+                <h4 class="mb-3">
+                    Customer Reviews
+                </h4>
+
+                <hr>
+
+
+                <!-- DISPLAY EXISTING REVIEWS -->
+                {% for review in reviews %}
+
+                    <div class="border-bottom pb-3 mb-3">
+
+                        <h5>
+                            {{ review.review_title }}
+                        </h5>
+
+
+                        <!-- DISPLAY REVIEW STARS -->
+                        <div class="review-stars">
+
+                            {% for i in "12345" %}
+
+                                {% if forloop.counter <= review.rating %}
+                                    <i class="fas fa-star"></i>
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                {% endif %}
+
+                            {% endfor %}
+
+                            <span class="text-dark">
+                                ({{ review.rating }}/5)
+                            </span>
+
+                        </div>
+
+
+                        <p class="mt-2">
+                            {{ review.review }}
+                        </p>
+
+
+                        <small class="text-muted">
+                            By {{ review.user }}
+                            | {{ review.created_at|date:"d M Y" }}
+                        </small>
+
+                    </div>
+
+                {% empty %}
+
+                    <p>
+                        No reviews yet. Be the first to review this product!
+                    </p>
+
+                {% endfor %}
+
+
+                <hr>
+
+
+                <!-- WRITE A REVIEW -->
+                <h4 class="mb-3">
+                    Write Your Review
+                </h4>
+
+
+                {% if user.is_authenticated %}
+
+                    {% if can_review %}
+
+                        <p class="text-success">
+                            <i class="fas fa-check-circle"></i>
+                            You have purchased this product.
+                            You can submit your review.
+                        </p>
+
+
+                        <!-- REVIEW FORM -->
+                        <form
+                            method="POST"
+                            action="{% url 'submit_review' product.id %}"
+                        >
+
+                            {% csrf_token %}
+
+
+                            <!-- STAR RATING -->
+                            <div class="form-group">
+
+                                <label>
+                                    How do you rate this product?
+                                </label>
+
+                                <div class="rating-stars">
+
+                                    <input
+                                        type="radio"
+                                        name="rating"
+                                        value="5"
+                                        id="star5"
+                                        required
+                                    >
+                                    <label for="star5"
+                                           title="5 stars">★</label>
+
+
+                                    <input
+                                        type="radio"
+                                        name="rating"
+                                        value="4"
+                                        id="star4"
+                                    >
+                                    <label for="star4"
+                                           title="4 stars">★</label>
+
+
+                                    <input
+                                        type="radio"
+                                        name="rating"
+                                        value="3"
+                                        id="star3"
+                                    >
+                                    <label for="star3"
+                                           title="3 stars">★</label>
+
+
+                                    <input
+                                        type="radio"
+                                        name="rating"
+                                        value="2"
+                                        id="star2"
+                                    >
+                                    <label for="star2"
+                                           title="2 stars">★</label>
+
+
+                                    <input
+                                        type="radio"
+                                        name="rating"
+                                        value="1"
+                                        id="star1"
+                                    >
+                                    <label for="star1"
+                                           title="1 star">★</label>
+
+                                </div>
 
                             </div>
 
 
-                            <!-- Add to Cart Button -->
-                            <button type="submit"
-                                    class="btn btn-primary btn-block">
+                            <!-- REVIEW TITLE -->
+                            <div class="form-group">
 
-                                <i class="fa fa-shopping-cart"></i>
+                                <label for="review_title">
+                                    Review Title
+                                </label>
 
-                                Add to Cart
+                                <input
+                                    type="text"
+                                    name="review_title"
+                                    id="review_title"
+                                    class="form-control"
+                                    maxlength="100"
+                                    placeholder="Enter review title"
+                                    required
+                                >
 
+                            </div>
+
+
+                            <!-- REVIEW DESCRIPTION -->
+                            <div class="form-group">
+
+                                <label for="review">
+                                    Your Review
+                                </label>
+
+                                <textarea
+                                    name="review"
+                                    id="review"
+                                    class="form-control"
+                                    rows="4"
+                                    maxlength="500"
+                                    placeholder="Write your experience..."
+                                    required
+                                ></textarea>
+
+                            </div>
+
+
+                            <!-- SUBMIT REVIEW -->
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                            >
+                                Submit Review
                             </button>
 
                         </form>
 
-                    </article>
 
-                </main>
+                    {% else %}
+
+                        <!-- NOT PURCHASED -->
+                        <div class="alert alert-info">
+
+                            <i class="fas fa-lock"></i>
+
+                            You can write a review after purchasing
+                            this product and completing payment.
+
+                        </div>
+
+                    {% endif %}
+
+
+                {% else %}
+
+                    <!-- GUEST USER -->
+                    <div class="alert alert-info">
+
+                        Please
+
+                        <a href="{% url 'login' %}">
+                            login
+                        </a>
+
+                        to submit a review.
+
+                    </div>
+
+                {% endif %}
 
             </div>
 
         </div>
 
     </div>
-
 </section>
 
 {% endblock %}

@@ -1,9 +1,11 @@
+
 from django.db import models
 from accounts.models import Account
 from store.models import product
 
 
 class Order(models.Model):
+
     STATUS = (
         ('New', 'New'),
         ('Accepted', 'Accepted'),
@@ -11,7 +13,17 @@ class Order(models.Model):
         ('Cancelled', 'Cancelled'),
     )
 
-    user = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True)
+    PAYMENT_STATUS = (
+        ('Pending', 'Pending'),
+        ('Success', 'Success'),
+        ('Failed', 'Failed'),
+    )
+
+    user = models.ForeignKey(
+        Account,
+        on_delete=models.SET_NULL,
+        null=True
+    )
 
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -23,27 +35,18 @@ class Order(models.Model):
     state = models.CharField(max_length=50)
     pincode = models.CharField(max_length=10)
 
-    order_total = models.DecimalField(
-        max_digits=10,
-        decimal_places=2
-    )
-
-    tax = models.DecimalField(
-        max_digits=10,
-        decimal_places=2
-    )
-
-    shipping_fee = models.DecimalField(
-        max_digits=10,
-        decimal_places=2
-    )
-
-    grand_total = models.DecimalField(
-        max_digits=10,
-        decimal_places=2
-    )
+    order_total = models.DecimalField(max_digits=10, decimal_places=2)
+    tax = models.DecimalField(max_digits=10, decimal_places=2)
+    shipping_fee = models.DecimalField(max_digits=10, decimal_places=2)
+    grand_total = models.DecimalField(max_digits=10, decimal_places=2)
 
     payment_method = models.CharField(max_length=50)
+
+    payment_status = models.CharField(
+        max_length=20,
+        choices=PAYMENT_STATUS,
+        default='Pending'
+    )
 
     status = models.CharField(
         max_length=20,
@@ -63,15 +66,10 @@ class Order(models.Model):
 
 
 class OrderProduct(models.Model):
-    order = models.ForeignKey(
-        Order,
-        on_delete=models.CASCADE
-    )
 
-    user = models.ForeignKey(
-        Account,
-        on_delete=models.CASCADE
-    )
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+
+    user = models.ForeignKey(Account, on_delete=models.CASCADE)
 
     product = models.ForeignKey(
         product,
@@ -85,19 +83,10 @@ class OrderProduct(models.Model):
         decimal_places=2
     )
 
-    color = models.CharField(
-        max_length=50,
-        blank=True
-    )
+    color = models.CharField(max_length=50, blank=True)
+    size = models.CharField(max_length=50, blank=True)
 
-    size = models.CharField(
-        max_length=50,
-        blank=True
-    )
-
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.product.product_name
